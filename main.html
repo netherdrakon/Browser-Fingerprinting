@@ -1,0 +1,184 @@
+
+<title>History sniffing PoC</title>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<style>
+#link {
+    color: blue;
+
+    font-weight: bold;
+}
+#link:visited {
+    color: purple;
+}
+body,h1 {font-family: "Raleway", Arial, sans-serif}
+h1 {letter-spacing: 6px}
+.w3-row-padding img {margin-bottom: 12px}
+</style>
+
+<div class="w3-content" style="max-width:1500px">
+
+<header class="w3-panel w3-center w3-opacity" style="padding:128px 16px">
+  <h1 class="w3-xlarge">Visibility Check</h1>  
+
+    <div class="w3-padding-32">
+        <div class="w3-bar w3-border" style="padding:20px;">
+        <h2>Check your History</h2>
+            These are all the sites you visited (highlighted in purple): <p/>
+            <a href="https://youtube.com" id="link" class="w3-bar-item w3-button">Youtube</a>
+            <a href="https://www.reddit.com" id="link" class="w3-bar-item w3-button">Reddit</a>
+            <a href="https://mail.google.com/mail/" id="link" class="w3-bar-item w3-button">Gmail</a>
+            <a href="https://canvas.vt.edu/" id="link" class="w3-bar-item w3-button">Canvas</a>
+            <a href="https://www.facebook.com/" id="link" class="w3-bar-item w3-button">Facebook</a>
+            <a href="https://www.autotempest.com/" id="link" class="w3-bar-item w3-button">Autotempest</a>
+            <a href="https://www.petrolicious.com/" id="link" class="w3-bar-item w3-button">Petrolicious</a>
+            <a href="https://www.netflix.com/" id="link" class="w3-bar-item w3-button">Netflix</a>
+            <a href="https://www.kaggle.com/" id="link" class="w3-bar-item w3-button">Kaggle</a>
+            <a href="https://www.instagram.com/" id="link" class="w3-bar-item w3-button">Instagram</a>
+            <a href="https://www.amazon.com/" id="link" class="w3-bar-item w3-button">Amazon</a>
+
+
+        <!-- <h2 onload="insertText();">Fingerprint:</h2>
+            <table id="Tablelist">
+                <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Device pixel ratio</td>
+                    <td id="devpix"></td>
+                </tr>
+                <tr>
+                    <td>Platform</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>User-agent</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Plugins</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Request headers</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Date format</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Battery Charging</td>
+                    <td></td>
+                </tr>
+            <Row name="Device pixel ratio" value={components.devicePixelRatio} /> -->
+
+
+<script>
+    const cb = e => {
+        e.preventDefault(); 
+        console.log(e.target.href);
+    };
+    document.addEventListener('click', cb, false);
+
+    async function runCatching(f) {
+        try {
+            return await f();
+        } catch {
+            return null;
+        }
+    }
+
+    function getDevicePixelRatio() {
+    return window.devicePixelRatio;
+    }
+    
+    function getUserAgent() {
+        return navigator.userAgent;
+    }
+    
+    function getPlatform() {
+        return navigator.platform;
+    }
+    
+    function getPlugins() {
+        return Array.from(navigator.plugins)
+        .map((plugin) => `${plugin.name} - ${plugin.filename}`)
+        .join(", ");
+    }
+    
+    async function getHeaders() {
+        let response = await fetch("https://httpbin.org/headers");
+        let { headers } = await response.json();
+        return ["Accept", "Accept-Encoding", "Accept-Language", "User-Agent"]
+        .map((key) => `${key}: ${headers[key]}`)
+        .join("\n");
+    }
+    
+    function getDateFormat() {
+        return new Date(0).toString();
+    }
+
+    async function getBatteryLevel() {
+        return navigator.getBattery().then((battery) => battery.level);
+    }
+
+    async function getBatteryCharging() {
+        return navigator.getBattery().then((battery) => battery.charging);
+    }
+
+    async function runCatching(f) {
+        try {
+        return await f();
+        } catch {
+        return null;
+        }
+    }
+
+    async function computeComponents() {
+
+        return{
+        devicePixelRatio: await runCatching(getDevicePixelRatio),
+        userAgent: await runCatching(getUserAgent),
+        platform: await runCatching(getPlatform),
+        plugins: await runCatching(getPlugins),
+        headers: await runCatching(getHeaders),
+        dateFormat: await runCatching(getDateFormat),
+        batteryCharging: await runCatching(getBatteryCharging),
+        batteryLevel: await runCatching(getBatteryLevel)
+        }
+
+        
+    }
+
+    var components = computeComponents();
+    computeComponents().then(data =>{
+        console.log(data);
+    })
+    // components = JSON.stringify(components);
+    console.log("Next");
+    console.log(components);
+
+    function insertText(){
+        document.getElementById(devpix).innerHTML = components[0];
+    }
+
+
+
+    var links = document.links;
+    console.log(links.length);
+    // for (var i = 0; i < links.length; ++i) {
+    //     var link = links[i];
+    //     /* exact strings to match actually need to be
+    //     auto-detected using reference elements */
+    //     // console.log(i);
+    //     // console.log(document.getElementById(link).color);
+    //     // console.log(getComputedStyle(link, "").color);
+    //     if (getComputedStyle(link, "").color == "rgb(0, 0, 255)") {
+    //         // we know link.href has not been visited
+    //         // console.log("Out");
+    //     } else if(getComputedStyle(link, "").color == "#ccc"){
+    //         console.log("In");
+    //     }
+    // }
+</script>
